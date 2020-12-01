@@ -1,0 +1,26 @@
+.display-flex {
+  display: flex;
+}
+
+.no-countries-selected {
+  height: 100%;
+}
+
+.tab-indicator-height {
+  --st-indicator-height: 3px;
+}
+
+.no-home-country {
+  height: 200px;
+  width: 100%;
+}
+
+.no-hastag-selected {
+  height: 100%;
+}
+
+.top-sticky {
+  position: sticky;
+  top: 0px;
+  z-index: 999;
+}

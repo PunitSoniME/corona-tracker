@@ -1,0 +1,72 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="home"></ion-back-button>
+    </ion-buttons>
+    <ion-title>{{countryName}}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+
+  <img *ngIf="countryData?.countryInfo?.flag" [src]="countryData?.countryInfo?.flag" width="100%" />
+
+  <ion-list lines="full">
+
+    <ion-item>
+      <ion-label>Total Cases</ion-label>
+      <ion-badge slot="end" color="primary">{{countryData?.cases | number: '2.'}}</ion-badge>
+    </ion-item>
+
+    <ion-item>
+      <ion-label>Total Recovered</ion-label>
+      <ion-badge slot="end" color="success">{{countryData?.recovered | number: '2.'}}</ion-badge>
+    </ion-item>
+
+    <ion-item>
+      <ion-label>Total Deaths</ion-label>
+      <ion-badge slot="end" color="danger">{{countryData?.deaths | number: '2.'}}</ion-badge>
+    </ion-item>
+
+    <ion-item>
+      <ion-label>Active Cases</ion-label>
+      <ion-badge slot="end" color="primary">{{countryData?.active | number: '2.'}}</ion-badge>
+    </ion-item>
+
+    <ion-item>
+      <ion-label>Today's Case(s)</ion-label>
+      <ion-badge slot="end" color="primary">{{countryData?.todayCases | number: '2.'}}</ion-badge>
+    </ion-item>
+
+    <ion-item>
+      <ion-label>Today's Death(s)</ion-label>
+      <ion-badge slot="end" color="danger">{{countryData?.todayDeaths | number: '2.'}}</ion-badge>
+    </ion-item>
+
+  </ion-list>
+
+
+  <!-- <ion-card>
+    <ion-card-title>
+
+    </ion-card-title>
+
+    <ion-card-content>
+      <div>
+        <div>
+          <div class="chart">
+            <canvas baseChart
+              [data]="pieChartData"
+              [labels]="pieChartLabels"
+              [chartType]="pieChartType"
+              [options]="pieChartOptions"
+              [plugins]="pieChartPlugins"
+              [colors]="pieChartColors"
+              [legend]="pieChartLegend">
+            </canvas>
+          </div>
+        </div>
+      </div>
+    </ion-card-content>
+  </ion-card> -->
+</ion-content>

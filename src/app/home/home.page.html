@@ -1,0 +1,331 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>
+      <b>Corona Tracker (COVID-19)</b>
+    </ion-title>
+
+    <ion-buttons slot="secondary">
+      <ion-button size="small" fill="solid" (click)="refreshData()">Refresh
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content #scrollElement>
+
+  <!-- 
+  <ion-refresher slot="fixed" (ionRefresh)="loadData($event)" pullFactor="0.8" pullMin="60" pullMax="120">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher> -->
+
+  <!-- <ion-refresher slot="fixed" (ionRefresh)="loadData($event)">
+    <ion-refresher-content pullingIcon="arrow-down" pullingText="Pull to refresh" refreshingSpinner="crescent"
+      refreshingText="Refreshing...">
+    </ion-refresher-content>
+  </ion-refresher> -->
+
+  <super-tabs (tabChange)="tabChange($event)">
+    <super-tabs-toolbar slot="top" color="primary" class="tab-indicator-height">
+      <super-tab-button>
+        <ion-label color="light">World</ion-label>
+      </super-tab-button>
+      <super-tab-button>
+        <ion-label color="light">Countries</ion-label>
+      </super-tab-button>
+      <super-tab-button>
+        <ion-label color="light">Tweets</ion-label>
+      </super-tab-button>
+    </super-tabs-toolbar>
+
+
+    <super-tabs-container>
+
+      <super-tab>
+        <ion-content>
+
+          <ion-card>
+            <ion-card-header>
+              <ion-card-title class="ion-text-center">
+                <b>All Over The World</b>
+              </ion-card-title>
+            </ion-card-header>
+
+            <ion-card-content class="ion-text-center">
+              <ion-text color="success">{{worldData?.recoveredPercentage}}% Recovered</ion-text>
+              <br />
+              <ion-text color="danger">{{worldData?.deathsPercentage}}% Deaths</ion-text>
+
+              <ion-grid>
+                <ion-row>
+                  <ion-col>
+                    <ion-chip color="primary">
+                      <ion-label>Cases: <b>{{worldData?.cases | number}}</b></ion-label>
+                    </ion-chip>
+
+                  </ion-col>
+                  <ion-col>
+                    <ion-chip color="success">
+                      <ion-label>Recovered: <b>{{worldData?.recovered | number}}</b></ion-label>
+                    </ion-chip>
+                  </ion-col>
+                </ion-row>
+
+                <ion-row>
+                  <ion-col>
+                    <ion-chip color="danger">
+                      <ion-label>Deaths: <b>{{worldData?.deaths | number}}</b></ion-label>
+                    </ion-chip>
+                  </ion-col>
+                </ion-row>
+
+              </ion-grid>
+            </ion-card-content>
+          </ion-card>
+
+          <div *ngIf="!homeCountryDetails"
+            class="display-flex no-home-country ion-justify-content-center ion-align-items-center">
+            <ion-button (click)="addHomeCountry()">Add Home Country</ion-button>
+          </div>
+
+          <ion-card *ngIf="homeCountryDetails">
+            <ion-card-header>
+
+              <ion-card-title class="ion-text-center">
+                <b>Country: {{homeCountryDetails.country}}</b>
+              </ion-card-title>
+
+              <ion-card-subtitle class="ion-text-center">
+                <ion-button size="small" fill="clean" color="primary" (click)="addHomeCountry()">(Change Home Country)
+                </ion-button>
+              </ion-card-subtitle>
+
+            </ion-card-header>
+
+            <ion-card-content class="ion-text-center">
+              <ion-text color="success">{{homeCountryDetails?.recoveredPercentage}}% Recovered</ion-text>
+              <br />
+              <ion-text color="danger">{{homeCountryDetails?.deathsPercentage}}% Deaths</ion-text>
+
+              <ion-grid>
+                <ion-row>
+                  <ion-col>
+                    <ion-chip color="primary">
+                      <ion-label>Today's Cases: <b>{{homeCountryDetails?.todayCases | number}}</b></ion-label>
+                    </ion-chip>
+                  </ion-col>
+
+                  <ion-col>
+                    <ion-chip color="danger">
+                      <ion-label>Today's Deaths: <b>{{homeCountryDetails?.todayDeaths | number}}</b></ion-label>
+                    </ion-chip>
+                  </ion-col>
+
+                </ion-row>
+
+                <ion-row>
+                  <ion-col>
+                    <ion-chip color="primary">
+                      <ion-label>Total Cases: <b>{{homeCountryDetails?.cases | number}}</b></ion-label>
+                    </ion-chip>
+                  </ion-col>
+
+                  <ion-col>
+                    <ion-chip color="danger">
+                      <ion-label>Total Deaths: <b>{{homeCountryDetails?.deaths | number}}</b></ion-label>
+                    </ion-chip>
+                  </ion-col>
+
+                </ion-row>
+
+                <ion-row>
+                  <ion-col>
+                    <ion-chip color="success">
+                      <ion-label>Total Recovered: <b>{{homeCountryDetails?.recovered | number}}</b></ion-label>
+                    </ion-chip>
+                  </ion-col>
+                </ion-row>
+
+                <ion-row>
+                  <ion-col>
+                    <ion-badge color="primary">ACTIVE: <b>{{homeCountryDetails?.active | number}}</b></ion-badge>
+                  </ion-col>
+
+                </ion-row>
+
+                <ion-row>
+                  <ion-col>
+                    <ion-button size="small" color="primary" [routerLink]="['/country', homeCountryDetails.country]">
+                      <ion-label>
+                        View More Details
+                      </ion-label>
+                      <ion-icon slot="end" name="chevron-forward-outline"></ion-icon>
+                    </ion-button>
+                  </ion-col>
+                </ion-row>
+
+              </ion-grid>
+            </ion-card-content>
+          </ion-card>
+
+
+        </ion-content>
+      </super-tab>
+
+      <super-tab>
+        <ion-content>
+
+          <ion-card *ngFor="let selectedCountry of selectedCountriesData">
+            <ion-card-header>
+
+              <ion-card-title class="ion-text-center">
+                <b>Country: {{selectedCountry.country}}</b>
+                <!-- <ion-avatar>
+                  <img [src]="selectedCountry.countryInfo.flag" />
+                </ion-avatar> -->
+              </ion-card-title>
+
+            </ion-card-header>
+
+            <ion-card-content class="ion-text-center">
+              <ion-text color="success">{{selectedCountry?.recoveredPercentage}}% Recovered</ion-text>
+              <br />
+              <ion-text color="danger">{{selectedCountry?.deathsPercentage}}% Deaths</ion-text>
+
+              <ion-grid>
+                <ion-row>
+                  <ion-col>
+                    <ion-chip color="primary">
+                      <ion-label>Today's Cases: <b>{{selectedCountry?.todayCases | number}}</b></ion-label>
+                    </ion-chip>
+                  </ion-col>
+
+                  <ion-col>
+                    <ion-chip color="danger">
+                      <ion-label>Today's Deaths: <b>{{selectedCountry?.todayDeaths | number}}</b></ion-label>
+                    </ion-chip>
+                  </ion-col>
+
+                </ion-row>
+
+                <ion-row>
+                  <ion-col>
+                    <ion-chip color="primary">
+                      <ion-label>Total Cases: <b>{{selectedCountry?.cases | number}}</b></ion-label>
+                    </ion-chip>
+                  </ion-col>
+
+                  <ion-col>
+                    <ion-chip color="danger">
+                      <ion-label>Total Deaths: <b>{{selectedCountry?.deaths | number}}</b></ion-label>
+                    </ion-chip>
+                  </ion-col>
+
+                </ion-row>
+
+                <ion-row>
+                  <ion-col>
+                    <ion-chip color="success">
+                      <ion-label>Total Recovered: <b>{{selectedCountry?.recovered | number}}</b></ion-label>
+                    </ion-chip>
+                  </ion-col>
+                </ion-row>
+
+                <ion-row>
+                  <ion-col>
+                    <ion-badge color="primary">ACTIVE: <b>{{selectedCountry?.active | number}}</b></ion-badge>
+                  </ion-col>
+
+                </ion-row>
+
+                <ion-row>
+                  <ion-col>
+                    <ion-button size="small" color="primary" [routerLink]="['/country', selectedCountry.country]">
+                      <ion-label>
+                        View More Details
+                      </ion-label>
+                      <ion-icon slot="end" name="chevron-forward-outline"></ion-icon>
+                    </ion-button>
+                  </ion-col>
+                </ion-row>
+
+              </ion-grid>
+            </ion-card-content>
+          </ion-card>
+
+          <div *ngIf="selectedCountriesData.length == 0"
+            class="display-flex no-countries-selected ion-justify-content-center ion-align-items-center">
+            <ion-text color="primary">
+              <h3><b>No Countries Selected</b></h3>
+            </ion-text>
+          </div>
+
+          <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+            <ion-fab-button (click)="selectCountryModal()">
+              <ion-icon name="add-outline"></ion-icon>
+            </ion-fab-button>
+          </ion-fab>
+
+        </ion-content>
+      </super-tab>
+
+      <super-tab>
+        <ion-content>
+
+          <div *ngIf="!currentHashTag"
+            class="display-flex no-hastag-selected ion-justify-content-center ion-align-items-center">
+            <ion-button (click)="openHashTags()">Select Covid HashTag</ion-button>
+          </div>
+
+          <ion-list *ngIf="currentHashTag" lines="none">
+
+            <ion-item class="ion-text-center top-sticky" lines="full">
+              <ion-label>
+                <h2><b>#{{this.currentHashTag}}</b></h2>
+                <ion-button size="small" fill="clean" color="primary" (click)="openHashTags()">(Change Hashtag)
+                </ion-button>
+              </ion-label>
+            </ion-item>
+
+            <ion-item *ngFor="let tweet of tweets; let i = index; let last = last" (click)="openTweet(tweet)"
+              [lines]="last == true ? 'none' : 'inset'">
+              <ion-avatar slot="start">
+                <img *ngIf="tweet.user && tweet.user.profile_image_url" [src]="tweet.user.profile_image_url">
+              </ion-avatar>
+              <ion-label>
+                <ion-text color="primary">
+                  <h2><b>{{tweet.user?.name}}</b></h2>
+                </ion-text>
+                <ion-label class="ion-text-wrap">
+                  {{tweet.text}}
+                </ion-label>
+              </ion-label>
+            </ion-item>
+
+            <!-- <ion-item class="ion-text-center" lines="none"> -->
+            <ion-button *ngIf="tweets.length > 0" expand="block" fill="outline" (click)="getTweets(true)">Load More...
+            </ion-button>
+            <!-- </ion-item> -->
+
+          </ion-list>
+
+        </ion-content>
+      </super-tab>
+
+    </super-tabs-container>
+  </super-tabs>
+  <!-- All Over The World Data -->
+
+
+  <!-- <ion-infinite-scroll *ngIf="activeIndex == 2" position="bottom" (ionInfinite)="getMoreTweets($event)">
+    <ion-infinite-scroll-content loadingSpinner="bubbles" loadingText="Loading more data...">
+    </ion-infinite-scroll-content>
+  </ion-infinite-scroll> -->
+
+  <!-- <hr /> -->
+
+  <!-- Your Country Data -->
+  <!-- <ion-text *ngIf="selectedCountriesData.length > 0" class="ion-text-center">
+    <h2><b>Selected Countries</b></h2>
+  </ion-text> -->
+
+</ion-content>
